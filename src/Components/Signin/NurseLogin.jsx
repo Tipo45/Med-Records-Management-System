@@ -107,14 +107,7 @@ const NurseLogin = () => {
                   >
                     Password
                   </label>
-                  <Link
-                    to="/"
-                    className="ml-auto font-secondary text-sm underline-offset-4 hover:text-secondary hover:underline text-gray-600"
-                    data-aos="fade-right"
-                    data-aos-duration="2500"
-                  >
-                    Forgot your password?
-                  </Link>
+                  
                 </div>
                 <input
                   id="password"
