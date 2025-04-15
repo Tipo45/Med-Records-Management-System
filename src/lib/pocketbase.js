@@ -13,26 +13,33 @@ export const isUserLoggedIn = () => {
 
 // create medical official
 export async function create_medofficer(
+  email,
   password,
   passwordConfirm,
-  email,
   firstname,
   lastname,
   role
 ) {
   const data = {
-    password: password,
-    passwordConfirm: passwordConfirm,
     email: email,
     emailVisibility: true,
+    password: password,
+    passwordConfirm: passwordConfirm,
     firstname: firstname,
     lastname: lastname,
     role: role,
   };
-  await pb.collection("medofficer").create(data);
-  const record = await pb
-    .collection("medofficer")
-    .authWithPassword(email, password);
+  const record = await pb.collection("medofficer").create(data);
+  //  await pb
+  //   .collection("medofficer")
+  //   .authWithPassword(email, password);
+  // await pb.collection('medofficer').requestVerification(email);
+  return record;
+}
+
+// request verification
+export async function requestVerification(email) {
+  const record = await pb.collection('medofficer').requestVerification(email);
   return record;
 }
 
@@ -58,7 +65,17 @@ export async function create_Patient(
   gender,
   phone,
   email,
-  address
+  address,
+  genotype,
+  bloodPressure,
+  temp,
+  pulse,
+  lastVisit,
+  nextVisit,
+  medications,
+  emergencyName,
+  emergencyRelation,
+  emergencyNumber,
 ) {
   const data = {
     fullname: fullname,
@@ -67,6 +84,16 @@ export async function create_Patient(
     phone: phone,
     email: email,
     address: address,
+    genotype: genotype,
+    bloodPressure,
+    temp : temp,
+    pulse: pulse,
+    lastVisit : lastVisit,
+    nextVisit: nextVisit,
+    medications: medications,
+    emergencyName: emergencyName,
+    emergencyRelation: emergencyRelation,
+    emergencyNumber: emergencyNumber,
     creator: pb.authStore.record.id,
   };
 

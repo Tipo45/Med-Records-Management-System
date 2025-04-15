@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteAccount } from "../../lib/pocketbase";
+import { deleteAccount, pb } from "../../lib/pocketbase";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useDoctorData } from "../../hooks/useDoctorData";
 
@@ -44,6 +44,11 @@ const Accountinfo = () => {
             <span className="block mt-2 text-lg font-bold font-primary text-gray-600">
               {userData?.email}
             </span>
+          </div>
+
+          <div  className="bg-gray-300 p-4 rounded-2xl">
+            <h1 className="text-lg font-semibold font-secondary">Verification Status:</h1>
+            <span>{pb.authStore.isValid}</span>
           </div>
         </section>
 

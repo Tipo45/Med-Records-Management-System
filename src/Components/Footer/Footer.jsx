@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="mt-50 w-full py-16 px-5 bg-text shadow-[0px_-4px_10px_rgba(0,0,0,0.2)]">
+    <footer className="mt-70 tablet:mt-80 w-full py-16 px-5 bg-text shadow-[0px_-4px_10px_rgba(0,0,0,0.2)]">
       <hr className="border-t border-gray-500 my-10" />
 
       <div

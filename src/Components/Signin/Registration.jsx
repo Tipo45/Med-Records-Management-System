@@ -84,47 +84,112 @@ const Registration = () => {
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   validateFirstname(firstname);
+  //   validateLastname(lastname);
+  //   validateRole(role);
+  //   validateEmail(email);
+  //   validatePassword(password);
+  //   validateConfirmPassword(passwordConfirm);
+
+  //   if (
+  //     firstnameError ||
+  //     lastnameError ||
+  //     emailError ||
+  //     roleError ||
+  //     passwordError ||
+  //     confirmPasswordError
+  //   ) {
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const result = await create_medofficer(
+  //       email,
+  //       password,
+  //       passwordConfirm,
+  //       firstname,
+  //       lastname,
+  //       role,
+  //     );
+
+  //     if (result.record) {
+  //       navigate("/email-verification");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+
+  //   setLoading(false);
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
+    // Validate all fields
     validateFirstname(firstname);
     validateLastname(lastname);
     validateRole(role);
     validateEmail(email);
     validatePassword(password);
     validateConfirmPassword(passwordConfirm);
-
-    if (
-      firstnameError ||
-      lastnameError ||
-      emailError ||
-      roleError ||
-      passwordError ||
-      confirmPasswordError
-    ) {
+  
+    // Check for errors directly from current values
+    const hasErrors = 
+      !firstname.trim() || 
+      !lastname.trim() || 
+      !role.trim() || 
+      !email.trim() || 
+      !password.trim() || 
+      !passwordConfirm.trim() ||
+      password !== passwordConfirm;
+  
+    if (hasErrors) {
       setLoading(false);
       return;
     }
-
+  
     try {
+      console.log("Attempting to create user..."); // Debug log
       const result = await create_medofficer(
+        email,
         password,
         passwordConfirm,
-        email,
         firstname,
         lastname,
-        role,
+        role
       );
-
-      if (result.record) {
-        navigate("/user_account/dashboard?registered=true");
+  
+      console.log("Creation result:", result); // Debug log
+      
+      if (result) {
+        console.log("Navigating to email verification..."); // Debug log
+        navigate("/email-verification", { 
+          state: { email: email },
+          replace: true 
+        });
+      } else {
+        console.error("Unexpected result format:", result);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Registration error:", error);
+      if (error.data?.data) {
+        const fieldErrors = error.data.data;
+        if (fieldErrors.email) {
+          setEmailError(fieldErrors.email.message);
+        }
+        if (fieldErrors.password) {
+          setPasswordError(fieldErrors.password.message);
+        }
+      }
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (

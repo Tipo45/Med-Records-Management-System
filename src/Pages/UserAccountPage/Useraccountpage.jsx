@@ -5,11 +5,12 @@ import Usersidebar from "../../Components/Useraccount/Usersidebar";
 import Dashboard from "../../Components/Useraccount/Dashboard";
 import Accountinfo from "../../Components/Useraccount/Accountinfo";
 import Addpatient from "../../Components/Useraccount/Addpatient";
+import Patientinformation from "../../Components/Useraccount/Patientinformation";
 
 const Useraccountpage = () => {
   const { activepage } = useParams();
 
-const validPages =["dashboard", "account-information", "add-patient"];
+const validPages =["dashboard", "account-information", "add-patient", "patient-information"];
   
   const isValidPage = validPages.includes(activepage);
 
@@ -22,6 +23,7 @@ const validPages =["dashboard", "account-information", "add-patient"];
             {activepage === "dashboard" && <Dashboard />}
             {activepage === "account-information" && <Accountinfo />}
             {activepage === "add-patient" && <Addpatient />}
+            {activepage === "patient-information" && <Patientinformation /> }
           </div>
         </section>
       ) : (

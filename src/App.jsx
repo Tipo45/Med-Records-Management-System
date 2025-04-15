@@ -10,6 +10,7 @@ import Landingpage from "./Pages/Landingpage";
 import Loginpage from "./Pages/SignInPages/Loginpage";
 import Registrationpage from "./Pages/SignInPages/Registrationpage";
 import Useraccountpage from "./Pages/UserAccountPage/Useraccountpage";
+import Emailverification from "./Components/Signin/Emailverification";
 
 function App() {
 
@@ -18,7 +19,7 @@ function App() {
   useEffect(() => {
     Aos.init({
       duration: 800,
-      once: false,
+      once: true,
       easing: "ease-in-out",
     });
   }, []);
@@ -32,6 +33,7 @@ function App() {
         <Route path="/login/:role" element={<Loginpage />} />
         <Route path="/registration" element={<Registrationpage />} />
         <Route path="/user_account/:activepage" element={<Useraccountpage />} />
+        <Route path="/email-verification" element={<Emailverification />} />
         <Route path="" element />
         <Route path="*" element={<Nopage />} />
       </Routes>

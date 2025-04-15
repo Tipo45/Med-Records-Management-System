@@ -11,12 +11,32 @@ const Addpatient = () => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [genotype, setGenotype] = useState("");
+  const [bloodPressure, setBloodPressure] = useState("");
+  const [temp, setTemp] = useState("");
+  const [pulse, setPulse] = useState("");
+  const [medications, setMedications] = useState("");
+  const [lastVisit, setLastVisit] = useState("");
+  const [nextVisit, setNextVisit] = useState("");
+  const [emergencyName, setEmergencyName] = useState("");
+  const [emergencyRelation, setEmergencyRelation] = useState("");
+  const [emergencyNumber, setEmergencyNumber] = useState("");
   const [fullNameError, setFullnameError] = useState("");
   const [ageError, setAgeError] = useState("");
   const [genderError, setGenderError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [addressError, setAddressError] = useState("");
+  const [genotypeError, setGenotypeError] = useState("");
+  const [bloodPressureError, setBloodPressureError] = useState("");
+  const [tempError, setTempError] = useState("");
+  const [pulseError, setPulseError] = useState("");
+  const [medicationsError, setMedicationsError] = useState("");
+  const [lastVisitError, setLastVisitError] = useState("");
+  const [nextVisitError, setNextVisitError] = useState("");
+  const [emergencyNameError, setEmergencyNameError] = useState("");
+  const [emergencyRelationError, setEmergencyRelationError] = useState("");
+  const [emergencyNumberError, setEmergencyNumberError] = useState("");
   const [loading, setLoading] = useState(false);
   // const [selectedFile, setSelectedFile] = useState(null);
   const navigate = useNavigate();
@@ -69,6 +89,86 @@ const Addpatient = () => {
     }
   };
 
+  const validateGenotype = (value) => {
+    if (value === "") {
+      setGenotypeError("required");
+    } else {
+      setGenotypeError("");
+    }
+  };
+
+  const validateBloodPressure = (value) => {
+    if (value === "") {
+      setBloodPressureError("required");
+    } else {
+      setBloodPressureError("");
+    }
+  };
+
+  const validateTemp = (value) => {
+    if (value === "") {
+      setTempError("required");
+    } else {
+      setTempError("");
+    }
+  };
+
+  const validatePulse = (value) => {
+    if (value === "") {
+      setPulseError("required");
+    } else {
+      setPulseError("");
+    }
+  };
+
+  const validateMedications = (value) => {
+    if (value === "") {
+      setMedicationsError("required");
+    } else {
+      setMedicationsError("");
+    }
+  };
+
+  const validateLastVisit = (value) => {
+    if (value === "") {
+      setLastVisitError("required");
+    } else {
+      setLastVisitError("");
+    }
+  };
+
+  const validateNextVisit = (value) => {
+    if (value === "") {
+      setNextVisitError("required");
+    } else {
+      setNextVisitError("");
+    }
+  };
+
+  const validateEmergencyName = (value) => {
+    if (value === "") {
+      setEmergencyNameError("required");
+    } else {
+      setEmergencyNameError("");
+    }
+  };
+
+  const validateEmergencyRelation = (value) => {
+    if (value === "") {
+      setEmergencyRelationError("required");
+    } else {
+      setEmergencyRelationError("");
+    }
+  };
+
+  const validateEmergencyNumber = (value) => {
+    if (value === "") {
+      setEmergencyNumberError("required");
+    } else {
+      setEmergencyNumberError("");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -80,6 +180,16 @@ const Addpatient = () => {
     validatePhone(phone);
     validateEmail(email);
     validateAddress(address);
+    validateGenotype(genotype);
+    validateBloodPressure(bloodPressure);
+    validateTemp(temp);
+    validatePulse(pulse);
+    validateMedications(medications);
+    validateLastVisit(lastVisit);
+    validateNextVisit(nextVisit);
+    validateEmergencyName(emergencyName);
+    validateEmergencyRelation(emergencyRelation);
+    validateEmergencyNumber(emergencyNumber);
 
     // Check for errors directly from current values
     const hasErrors =
@@ -89,12 +199,32 @@ const Addpatient = () => {
       !phone.trim() ||
       !email.trim() ||
       !address.trim() ||
+      !genotype.trim() ||
+      !bloodPressure.trim() ||
+      !temp.trim() ||
+      !pulse.trim() ||
+      !lastVisit.trim() ||
+      !nextVisit.trim() ||
+      !medications.trim() ||
+      !emergencyName.trim() ||
+      !emergencyRelation.trim() ||
+      !emergencyNumber.trim() ||
       fullNameError ||
       ageError ||
       genderError ||
       phoneError ||
       emailError ||
-      addressError;
+      addressError ||
+      genotypeError ||
+      bloodPressureError ||
+      tempError ||
+      pulseError ||
+      lastVisitError ||
+      nextVisitError ||
+      medicationsError ||
+      emergencyNameError ||
+      emergencyRelationError ||
+      emergencyNumberError;
 
     if (hasErrors) {
       setLoading(false);
@@ -108,7 +238,17 @@ const Addpatient = () => {
         gender,
         phone,
         email,
-        address
+        address,
+        genotype,
+        bloodPressure,
+        temp,
+        pulse,
+        lastVisit,
+        nextVisit,
+        medications,
+        emergencyName,
+        emergencyRelation,
+        emergencyNumber
       );
 
       console.log("API Response:", result); // Debug log
@@ -121,6 +261,16 @@ const Addpatient = () => {
         setPhone("");
         setEmail("");
         setAddress("");
+        setGenotype("");
+        setBloodPressure("");
+        setTemp("");
+        setPulse("");
+        setLastVisit("");
+        setNextVisit("");
+        setMedications("");
+        setEmergencyName("");
+        setEmergencyRelation("");
+        setEmergencyNumber("");
         navigate("/user_account/dashboard?update=success");
       }
     } catch (error) {
@@ -132,13 +282,16 @@ const Addpatient = () => {
 
   return (
     <section className="mt-4">
-      <div className="relative w-full h-full tablet:w-auto tablet:h-auto overflow-y-auto">
-        <h2 className="text-lg font-semibold mt-4 mb-8 text-center">
+      <div className="relative w-full h-full tablet:w-auto tablet:h-auto overflow-y-auto mb-5">
+        <h2 className="text-2xl font-semibold mt-4 mb-8 text-center">
           Patient's record
         </h2>
 
         <form onSubmit={(e) => handleSubmit(e)}>
-          <div className="grid grid-cols-1 gap-8 px-4 tablet:grid-cols-2">
+          <h4 className="font-primary font-bold text-xl mb-4 pl-4">
+            Personal Information
+          </h4>
+          <section className="grid grid-cols-1 gap-8 px-4 tablet:grid-cols-2">
             {/* Full Name */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="fullname" className="font-secondary">
@@ -166,12 +319,12 @@ const Addpatient = () => {
             {/* Age */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="age" className="font-secondary">
-                Age
+                Date of Birth
               </label>
               <input
-                type="number"
+                type="date"
                 name="age"
-                placeholder="Enter age"
+                placeholder="Enter date of birth"
                 value={age}
                 onChange={(e) => {
                   setAge(e.target.value);
@@ -267,6 +420,7 @@ const Addpatient = () => {
               </label>
               <input
                 type="text"
+                placeholder="enter address"
                 name="address"
                 value={address}
                 onChange={(e) => {
@@ -306,7 +460,247 @@ const Addpatient = () => {
               )} 
             </div>
             */}
+          </section>
+
+          <h4 className="font-primary font-bold text-xl mb-4 mt-8 pl-4">
+            Medical Information
+          </h4>
+          <section className="grid grid-cols-1 gap-8 px-4 tablet:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="genotype" className="font-secondary">
+                Genotype
+              </label>
+              <select
+                name="bloodtype"
+                value={genotype}
+                onChange={(e) => setGenotype(e.target.value)}
+                onBlur={(e) => validateGenotype(e.target.value)}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 w-full font-primary"
+              >
+                <option value="">Select gender</option>
+                <option value="o+">O+</option>
+                <option value="o-">O-</option>
+                <option value="a-">A-</option>
+                <option value="a+">A+</option>
+                <option value="b+">B+</option>
+                <option value="b-">B-</option>
+                <option value="ab-">AB-</option>
+                <option value="ab+">AB+</option>
+              </select>
+              {genotypeError && (
+                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                  {genotypeError}
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="bloodpressure" className="font-secondary">
+                Blood Pressure
+              </label>
+              <input
+                type="text"
+                placeholder="enter value"
+                name="bloodpressure"
+                value={bloodPressure}
+                onChange={(e) => {
+                  setBloodPressure(e.target.value);
+                  validateBloodPressure(e.target.value);
+                }}
+                onBlur={(e) => validateBloodPressure(e.target.value)}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+              />
+              {bloodPressureError && (
+                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                  {bloodPressureError}
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="temperature" className="font-secondary">
+                Temperature
+              </label>
+              <input
+                type="text"
+                placeholder="enter value"
+                name="temperature"
+                value={temp}
+                onChange={(e) => {
+                  setTemp(e.target.value);
+                  validateTemp(e.target.value);
+                }}
+                onBlur={(e) => validateTemp(e.target.value)}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+              />
+              {tempError && (
+                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                  {tempError}
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="pulse" className="font-secondary">
+                Pulse
+              </label>
+              <input
+                type="text"
+                placeholder="enter value"
+                name="pulse"
+                value={pulse}
+                onChange={(e) => {
+                  setPulse(e.target.value);
+                  validatePulse(e.target.value);
+                }}
+                onBlur={(e) => validatePulse(e.target.value)}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+              />
+              {pulseError && (
+                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                  {pulseError}
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="lastvisit" className="font-secondary">
+                Last Visit
+              </label>
+              <input
+                type="date"
+                name="lastvisit"
+                value={lastVisit}
+                onChange={(e) => {
+                  setLastVisit(e.target.value);
+                  validateLastVisit(e.target.value);
+                }}
+                onBlur={(e) => validateLastVisit(e.target.value)}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+              />
+              {lastVisitError && (
+                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                  {lastVisitError}
+                </div>
+              )}
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="nextvisit" className="font-secondary">
+                Next Visit
+              </label>
+              <input
+                type="date"
+                name="nextvisit"
+                value={nextVisit}
+                onChange={(e) => {
+                  setNextVisit(e.target.value);
+                  validateNextVisit(e.target.value);
+                }}
+                onBlur={(e) => validateNextVisit(e.target.value)}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+              />
+              {nextVisitError && (
+                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                  {nextVisitError}
+                </div>
+              )}
+            </div>
+          </section>
+
+          <div className="grid grid-cols-1 gap-2 px-4 mt-4">
+            <label htmlFor="medications" className="font-secondary">
+              Medications
+            </label>
+            <textarea
+              placeholder="enter medication"
+              name="medications"
+              value={medications}
+              onChange={(e) => {
+                setMedications(e.target.value);
+                validateMedications(e.target.value);
+              }}
+              onBlur={(e) => validateMedications(e.target.value)}
+              className="h-30 outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+            />
+            {medicationsError && (
+              <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                {medicationsError}
+              </div>
+            )}
           </div>
+
+          <h4 className="font-primary font-bold text-xl mb-4 mt-8 pl-4">
+            Emergency Contact Information
+          </h4>
+
+          <section className="grid grid-cols-1 gap-8 px-4 tablet:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="emergenc o" className="font-secondary">
+                Name
+              </label>
+              <input
+                type="text"
+                placeholder="enter name"
+                name="emergencyname"
+                value={emergencyName}
+                onChange={(e) => {
+                  setEmergencyName(e.target.value);
+                  validateEmergencyName(e.target.value);
+                }}
+                onBlur={(e) => validateEmergencyName(e.target.value)}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+              />
+              {emergencyNameError && (
+                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                  {emergencyNameError}
+                </div>
+              )}
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="emergencyrelationship" className="font-secondary">
+                Relationship
+              </label>
+              <input
+                type="text"
+                placeholder="enter relationship"
+                name="emergencyrelation"
+                value={emergencyRelation}
+                onChange={(e) => {
+                  setEmergencyRelation(e.target.value);
+                  validateEmergencyRelation(e.target.value);
+                }}
+                onBlur={(e) => validateEmergencyRelation(e.target.value)}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+              />
+              {emergencyRelationError && (
+                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                  {emergencyRelationError}
+                </div>
+              )}
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="emergencynumber" className="font-secondary">
+                Phone
+              </label>
+              <input
+                type="number"
+                placeholder="enter phone number"
+                name="emergencynumber"
+                value={emergencyNumber}
+                onChange={(e) => {
+                  setEmergencyNumber(e.target.value);
+                  validateEmergencyNumber(e.target.value);
+                }}
+                onBlur={(e) => validateEmergencyNumber(e.target.value)}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              {emergencyNumberError && (
+                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
+                  {emergencyNumberError}
+                </div>
+              )}
+            </div>
+          </section>
 
           <div className="flex justify-center mt-8">
             {loading ? (
