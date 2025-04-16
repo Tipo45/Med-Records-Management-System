@@ -43,11 +43,33 @@ export async function requestVerification(email) {
   return record;
 }
 
+// request OTP
+export async function request_OTP(email) {
+  const record = await pb.collection("medofficer").requestOTP(email);
+  return record;
+}
+
 // login medofficer
 export async function login_doctor(email, password) {
   const record = await pb
     .collection("medofficer")
     .authWithPassword(email, password);
+  return record;
+}
+
+// check verified status
+export async function checkVerifyStatus() {  
+  if (pb.authStore.isValid) {
+    await pb.collection('medofficer').authRefresh();
+    return pb.authStore.record?.verified || false;
+  }
+}
+
+// login medOfficer
+export async function login_medOfficer(email, otp) {
+  const record = await pb
+    .collection("medofficer")
+    .authWithOTP(email, otp);
   return record;
 }
 

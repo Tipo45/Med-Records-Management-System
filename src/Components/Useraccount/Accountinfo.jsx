@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteAccount, pb } from "../../lib/pocketbase";
+import { checkVerifyStatus, deleteAccount } from "../../lib/pocketbase";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useDoctorData } from "../../hooks/useDoctorData";
+import { VscVerifiedFilled } from "react-icons/vsc";
+import { MdErrorOutline } from "react-icons/md";
+import { FiSend } from "react-icons/fi";
+import { FaSpinner } from "react-icons/fa";
 
 const Accountinfo = () => {
   const { data: userData } = useDoctorData();
   const navigate = useNavigate();
-
   const userRole = userData?.role;
+
+  const toggleConfirm = () => {
+    alert("confirmation link sent");
+  };
+
+  const [isVerified, setIsVerified] = useState(null); // null means "still checking"
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      const status = await checkVerifyStatus();
+      setIsVerified(status);
+    };
+    fetchStatus();
+  }, []);
 
   return (
     <section>
@@ -46,9 +63,46 @@ const Accountinfo = () => {
             </span>
           </div>
 
-          <div  className="bg-gray-300 p-4 rounded-2xl">
-            <h1 className="text-lg font-semibold font-secondary">Verification Status:</h1>
-            <span>{pb.authStore.isValid}</span>
+          <div>
+            <div
+              className="bg-gray-300 p-4 rounded-2xl"
+              data-aos="zoom-in-right"
+              data-aos-delay="500"
+              data-aos-duration="1000"
+            >
+              <h1 className="text-lg font-semibold font-secondary">
+                Verification Status:
+              </h1>
+
+              <div className="block mt-2 text-lg font-bold font-primary">
+  {isVerified === null ? (
+    <span className="flex items-center text-gray-600">
+      <FaSpinner className="animate-spin mr-2" />
+      Checking verification status...
+    </span>
+  ) : isVerified ? (
+    <span className="flex text-green-600">
+      Verified <VscVerifiedFilled className="mt-1.5 ml-1" />
+    </span>
+  ) : (
+    <span className="flex text-red-600">
+      Not Verified <MdErrorOutline className="mt-1.5 ml-1" />
+    </span>
+  )}
+
+  {!isVerified && isVerified !== null && (
+    <div className="mt-2">
+      <button
+        onClick={toggleConfirm}
+        className="bg-gray-500 hover:bg-gray-600 cursor-pointer font-primary font-medium flex items-center rounded-xl p-4 text-white text-sm"
+      >
+        Send Confirmation Link <FiSend className="ml-2 mt-1" />
+      </button>
+    </div>
+  )}
+</div>
+
+            </div>
           </div>
         </section>
 

@@ -55,7 +55,7 @@ const Emailverification = () => {
   
             <button
               onClick={() => navigate("/login/doctor")}
-              className="w-full cursor-pointer py-3 px-4 flex items-center justify-center text-text font-medium rounded-lg group"
+              className="w-full cursor-pointer py-3 px-4 flex items-center justify-center text-text hover:text-secondary font-medium rounded-lg group"
             >
               Return to Login <FaArrowRight className="ml-2 transition-all duration-300 group-hover:translate-x-2" />
             </button>

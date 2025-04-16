@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { FaSpinner } from "react-icons/fa";
 import { create_Patient } from "../../lib/pocketbase";
 
@@ -11,6 +10,7 @@ const Addpatient = () => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [upload, setUpload] = useState("");
   const [genotype, setGenotype] = useState("");
   const [bloodPressure, setBloodPressure] = useState("");
   const [temp, setTemp] = useState("");
@@ -27,6 +27,7 @@ const Addpatient = () => {
   const [phoneError, setPhoneError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [addressError, setAddressError] = useState("");
+  const [uploadError, setUploadError] = useState("");
   const [genotypeError, setGenotypeError] = useState("");
   const [bloodPressureError, setBloodPressureError] = useState("");
   const [tempError, setTempError] = useState("");
@@ -38,7 +39,7 @@ const Addpatient = () => {
   const [emergencyRelationError, setEmergencyRelationError] = useState("");
   const [emergencyNumberError, setEmergencyNumberError] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const navigate = useNavigate();
 
   const validateFullName = (value) => {
@@ -54,6 +55,7 @@ const Addpatient = () => {
       setAgeError("required");
     } else {
       setAgeError("");
+      setSelectedFile
     }
   };
 
@@ -88,6 +90,14 @@ const Addpatient = () => {
       setAddressError("");
     }
   };
+
+  const validateUpload = (value) => {
+    if (!value) {
+      setUploadError("select an image");
+    } else {
+      setUploadError("");
+    }
+  }
 
   const validateGenotype = (value) => {
     if (value === "") {
@@ -166,6 +176,14 @@ const Addpatient = () => {
       setEmergencyNumberError("required");
     } else {
       setEmergencyNumberError("");
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      console.log("Selected file:", file);
     }
   };
 
@@ -437,7 +455,7 @@ const Addpatient = () => {
               )}
             </div>
 
-            {/* Photo Upload 
+            Photo Upload 
             <div className="flex flex-col">
               <span className="mb-4 font-secondary">Add patient's photo</span>
               <div>
@@ -446,6 +464,7 @@ const Addpatient = () => {
                   <input
                     type="file"
                     className="hidden"
+                    value={upload}
                     onChange={handleFileChange}
                   />
                 </label>
@@ -453,13 +472,13 @@ const Addpatient = () => {
                   {selectedFile ? selectedFile.name : "No file chosen"}
                 </span>
               </div>
-               {errors.photo && (
+               {uploadError && (
                 <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {errors.photo}
+                  {uploadError}
                 </div>
               )} 
             </div>
-            */}
+           
           </section>
 
           <h4 className="font-primary font-bold text-xl mb-4 mt-8 pl-4">

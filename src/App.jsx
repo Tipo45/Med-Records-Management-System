@@ -11,6 +11,7 @@ import Loginpage from "./Pages/SignInPages/Loginpage";
 import Registrationpage from "./Pages/SignInPages/Registrationpage";
 import Useraccountpage from "./Pages/UserAccountPage/Useraccountpage";
 import Emailverification from "./Components/Signin/Emailverification";
+import VerifyOTP from "./Components/Signin/VerifyOTP";
 
 function App() {
 
@@ -34,7 +35,7 @@ function App() {
         <Route path="/registration" element={<Registrationpage />} />
         <Route path="/user_account/:activepage" element={<Useraccountpage />} />
         <Route path="/email-verification" element={<Emailverification />} />
-        <Route path="" element />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="*" element={<Nopage />} />
       </Routes>
     </BrowserRouter>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { login_doctor } from "../../lib/pocketbase";
+import { request_OTP } from "../../lib/pocketbase";
 
 const DocLogin = () => {
   const [email, setEmail] = useState("");
@@ -32,28 +32,96 @@ const DocLogin = () => {
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setLoginError("");
+
+  //   validateEmail(email);
+  //   validatePassword(password);
+
+  //   if (!emailError && !passwordError) {
+  //     try {
+  //         navigate("/verify-otp");
+  //     } catch (error) {
+  //       console.log(error);
+  //       setLoginError("Incorrect login details");
+  //     }
+  //   }
+
+  //   setLoading(false);
+  // };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+   
+  
+  //   validateEmail(email);
+  //   validatePassword(password);
+  
+  //   if (emailError || passwordError) {
+  //     setLoading(false);
+  //     return;
+  //   }
+  
+  //   try {
+  //     // First request OTP to be sent to the user's email
+  //     await pb.collection('medofficer').requestOTP(email);
+      
+  //     // If OTP request succeeds, navigate to verification page
+  //     navigate("/verify-otp", { 
+  //       state: { email } // Pass the email to the OTP page
+  //     });
+  //   } catch (error) {
+  //     console.error("Login error:", error);
+  //     setLoginError(error.message || "Failed to send OTP. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setLoginError("");
-
+    setLoginError(""); // Clear previous errors
+  
+    // Validate fields
     validateEmail(email);
     validatePassword(password);
-
-    if (!emailError && !passwordError) {
-      try {
-        const result = await login_doctor(email, password);
-
-        if (result.record) {
-          navigate("/user_account/dashboard?login=success");
-        }
-      } catch (error) {
-        console.log(error);
-        setLoginError("Incorrect login details");
-      }
+  
+    // Check if fields are empty
+    if (!email || !password) {
+      setLoading(false);
+      return; // Don't proceed if fields are empty
     }
-
-    setLoading(false);
+  
+    // Check if there are any validation errors
+    if (emailError || passwordError) {
+      setLoading(false);
+      return;
+    }
+  
+    try {
+      // First request OTP to be sent to the user's email
+      const result = request_OTP(email);
+      
+      // If OTP request succeeds, navigate to verification page
+      if (result) {
+        navigate("/verify-otp", { 
+          state: { email } // Pass the email to the OTP page
+        });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      // Only show error if fields are filled
+      if (email && password) {
+        setLoginError(error.message || "Failed to send OTP. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
