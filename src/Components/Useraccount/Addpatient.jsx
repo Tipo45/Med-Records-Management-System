@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import { create_Patient } from "../../lib/pocketbase";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Addpatient = () => {
   const [formData, setFormData] = useState({
@@ -26,6 +27,7 @@ const Addpatient = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const navigate = useNavigate();
 
@@ -103,7 +105,6 @@ const Addpatient = () => {
 
     try {
       const result = await create_Patient(data);
-      console.log("Create Patient Result:", result);
 
       if (result) {
         setFormData({
@@ -126,10 +127,10 @@ const Addpatient = () => {
           emergencyNumber: ""
         });
         setErrors({});
+         queryClient.invalidateQueries({ queryKey: ["patients"] });
         setTimeout(() => {
           navigate("/user_account/dashboard?update=success");
         }, 0);
-        // navigate("/user_account/dashboard?update=success");
       }
     } catch (error) {
       // Map backend field errors to form fields if available
