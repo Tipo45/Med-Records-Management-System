@@ -17,7 +17,7 @@ const Accountinfo = () => {
     alert("confirmation link sent");
   };
 
-  const [isVerified, setIsVerified] = useState(null); // null means "still checking"
+  const [isVerified, setIsVerified] = useState(null);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -25,6 +25,11 @@ const Accountinfo = () => {
       setIsVerified(status);
     };
     fetchStatus();
+
+    const interval = setInterval(fetchStatus, 3000); 
+
+    return () => clearInterval(interval);
+
   }, []);
 
   return (
