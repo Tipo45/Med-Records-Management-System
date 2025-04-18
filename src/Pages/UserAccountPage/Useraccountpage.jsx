@@ -8,11 +8,14 @@ import Addpatient from "../../Components/Useraccount/Addpatient";
 import Patientinformation from "../../Components/Useraccount/Patientinformation";
 
 const Useraccountpage = () => {
-  const { activepage } = useParams();
+  const { activepage, id } = useParams();
 
 const validPages =["dashboard", "account-information", "add-patient", "patient-information"];
   
-  const isValidPage = validPages.includes(activepage);
+const isValidPage =
+validPages.includes(activepage) &&
+// For "patient-information", require an ID
+(activepage !== "patient-information" || !!id);
 
   return (
     <section>
@@ -23,7 +26,7 @@ const validPages =["dashboard", "account-information", "add-patient", "patient-i
             {activepage === "dashboard" && <Dashboard />}
             {activepage === "account-information" && <Accountinfo />}
             {activepage === "add-patient" && <Addpatient />}
-            {activepage === "patient-information" && <Patientinformation /> }
+            {activepage === "patient-information" && <Patientinformation id={id} /> }
           </div>
         </section>
       ) : (

@@ -90,7 +90,7 @@ const Dashboard = () => {
             {data?.map((record) => (
               <div key={record.id} className="">
                 <button
-                  onClick={() => navigate("/user_account/patient-information")}
+                  onClick={() => navigate(`/user_account/patient-information/${record.id}`)}
                   className="w-full cursor-pointer bg-gray-300 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col space-y-2 items-center justify-center h-30 px-2"
                 >
                   <h1 className="text-lg font-primary">{record.fullname}</h1>

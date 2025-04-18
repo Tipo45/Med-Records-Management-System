@@ -20,7 +20,6 @@ function App() {
   useEffect(() => {
     Aos.init({
       duration: 800,
-      once: true,
       easing: "ease-in-out",
     });
   }, []);
@@ -34,6 +33,7 @@ function App() {
         <Route path="/login/:role" element={<Loginpage />} />
         <Route path="/registration" element={<Registrationpage />} />
         <Route path="/user_account/:activepage" element={<Useraccountpage />} />
+        <Route path="/user_account/:activepage/:id" element={<Useraccountpage />} />
         <Route path="/email-verification" element={<Emailverification />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="*" element={<Nopage />} />

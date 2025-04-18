@@ -2,9 +2,9 @@
 
 import PocketBase from "pocketbase";
 
-// export const pb = new PocketBase("http://127.0.0.1:8090");
+export const pb = new PocketBase("http://127.0.0.1:8090");
 
-export const pb = new PocketBase("https://service-konnect.pockethost.io/");
+// export const pb = new PocketBase("https://service-konnect.pockethost.io/");
 
 // checks if a user is logged in
 export const isUserLoggedIn = () => {
@@ -81,44 +81,17 @@ export async function doctor_info() {
 }
 
 // create patients
-export async function create_Patient(
-  fullname,
-  age,
-  gender,
-  phone,
-  email,
-  address,
-  genotype,
-  bloodPressure,
-  temp,
-  pulse,
-  lastVisit,
-  nextVisit,
-  medications,
-  emergencyName,
-  emergencyRelation,
-  emergencyNumber,
-) {
-  const data = {
-    fullname: fullname,
-    age: age,
-    gender: gender,
-    phone: phone,
-    email: email,
-    address: address,
-    genotype: genotype,
-    bloodPressure,
-    temp : temp,
-    pulse: pulse,
-    lastVisit : lastVisit,
-    nextVisit: nextVisit,
-    medications: medications,
-    emergencyName: emergencyName,
-    emergencyRelation: emergencyRelation,
-    emergencyNumber: emergencyNumber,
-    creator: pb.authStore.record.id,
-  };
+// export async function create_Patient(data) {
+//   const record = await pb.collection("patients").create(data);
+//   return record;
+// }
 
+export async function create_Patient(data) {
+  if (data instanceof FormData) {
+    data.append("creator", pb.authStore.record?.id);
+  } else if (typeof data === "object") {
+    data.creator = pb.authStore.record?.id;
+  }
   const record = await pb.collection("patients").create(data);
   return record;
 }
@@ -128,8 +101,14 @@ export async function patient_info() {
   const userId = pb.authStore.record.id;
 
   const record = await pb.collection("patients").getFullList({
-    filter: `creator = "${userId}"`,
+    filter: `creator = "${userId}"`
   });
+  return record;
+}
+
+// view patients by id
+export async function getSinglePatient(id) {
+  const record = await pb.collection("patients").getOne(id);
   return record;
 }
 

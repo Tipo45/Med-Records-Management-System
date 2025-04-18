@@ -1,189 +1,74 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import { create_Patient } from "../../lib/pocketbase";
 
 const Addpatient = () => {
-  const [fullname, setFullname] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
-  const [upload, setUpload] = useState("");
-  const [genotype, setGenotype] = useState("");
-  const [bloodPressure, setBloodPressure] = useState("");
-  const [temp, setTemp] = useState("");
-  const [pulse, setPulse] = useState("");
-  const [medications, setMedications] = useState("");
-  const [lastVisit, setLastVisit] = useState("");
-  const [nextVisit, setNextVisit] = useState("");
-  const [emergencyName, setEmergencyName] = useState("");
-  const [emergencyRelation, setEmergencyRelation] = useState("");
-  const [emergencyNumber, setEmergencyNumber] = useState("");
-  const [fullNameError, setFullnameError] = useState("");
-  const [ageError, setAgeError] = useState("");
-  const [genderError, setGenderError] = useState("");
-  const [phoneError, setPhoneError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [addressError, setAddressError] = useState("");
-  const [uploadError, setUploadError] = useState("");
-  const [genotypeError, setGenotypeError] = useState("");
-  const [bloodPressureError, setBloodPressureError] = useState("");
-  const [tempError, setTempError] = useState("");
-  const [pulseError, setPulseError] = useState("");
-  const [medicationsError, setMedicationsError] = useState("");
-  const [lastVisitError, setLastVisitError] = useState("");
-  const [nextVisitError, setNextVisitError] = useState("");
-  const [emergencyNameError, setEmergencyNameError] = useState("");
-  const [emergencyRelationError, setEmergencyRelationError] = useState("");
-  const [emergencyNumberError, setEmergencyNumberError] = useState("");
+  const [formData, setFormData] = useState({
+    fullname: "",
+    dateOfBirth: "",
+    gender: "",
+    phone: "",
+    email: "",
+    address: "",
+    upload: null,
+    genotype: "",
+    bloodPressure: "",
+    temp: "",
+    pulse: "",
+    medications: "",
+    lastVisit: "",
+    nextVisit: "",
+    emergencyName: "",
+    emergencyRelation: "",
+    emergencyNumber: ""
+  });
+
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+
   const navigate = useNavigate();
 
-  const validateFullName = (value) => {
-    if (value === "") {
-      setFullnameError("required");
-    } else {
-      setFullnameError("");
+  // Validate all required fields, including photo and all text/select fields
+  const validateField = useCallback((name, value) => {
+    let error = "";
+
+    if (name === "upload") {
+      if (!value) {
+        error = "Photo is required";
+      } else if (value && value.type && !value.type.startsWith("image/")) {
+        error = "Only image files are allowed";
+      }
+    } else if (!value || (typeof value === "string" && !value.trim())) {
+      error = "Required field";
+    } else if (name === "email" && !/^\S+@\S+\.\S+$/.test(value)) {
+      error = "must be a valid email address";
+    } else if (name === "phone" && !/^\d{10,15}$/.test(value)) {
+      error = "Phone number must be 10-15 digits";
+    } else if (name === "dateOfBirth" && new Date(value) > new Date()) {
+      error = "Date cannot be in the future";
+    } else if (name === "nextVisit" && new Date(value) < new Date()) {
+      error = "Next visit must be in the future";
     }
+    setErrors(prev => ({ ...prev, [name]: error }));
+    return !error;
+  }, []);
+
+  // Validate all fields on submit
+  const validateAllFields = () => {
+    let valid = true;
+    Object.entries(formData).forEach(([name, value]) => {
+      if (!validateField(name, value)) valid = false;
+    });
+    return valid;
   };
 
-  const validateAge = (value) => {
-    if (value === "") {
-      setAgeError("required");
+  const handleBlur = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "upload") {
+      validateField(name, files && files[0]);
     } else {
-      setAgeError("");
-      setSelectedFile
-    }
-  };
-
-  const validateGender = (value) => {
-    if (value === "") {
-      setGenderError("required");
-    } else {
-      setGenderError("");
-    }
-  };
-
-  const validatePhone = (value) => {
-    if (value === "") {
-      setPhoneError("required");
-    } else {
-      setPhoneError("");
-    }
-  };
-
-  const validateEmail = (value) => {
-    if (value === "") {
-      setEmailError("required");
-    } else {
-      setEmailError("");
-    }
-  };
-
-  const validateAddress = (value) => {
-    if (value === "") {
-      setAddressError("required");
-    } else {
-      setAddressError("");
-    }
-  };
-
-  const validateUpload = (value) => {
-    if (!value) {
-      setUploadError("select an image");
-    } else {
-      setUploadError("");
-    }
-  }
-
-  const validateGenotype = (value) => {
-    if (value === "") {
-      setGenotypeError("required");
-    } else {
-      setGenotypeError("");
-    }
-  };
-
-  const validateBloodPressure = (value) => {
-    if (value === "") {
-      setBloodPressureError("required");
-    } else {
-      setBloodPressureError("");
-    }
-  };
-
-  const validateTemp = (value) => {
-    if (value === "") {
-      setTempError("required");
-    } else {
-      setTempError("");
-    }
-  };
-
-  const validatePulse = (value) => {
-    if (value === "") {
-      setPulseError("required");
-    } else {
-      setPulseError("");
-    }
-  };
-
-  const validateMedications = (value) => {
-    if (value === "") {
-      setMedicationsError("required");
-    } else {
-      setMedicationsError("");
-    }
-  };
-
-  const validateLastVisit = (value) => {
-    if (value === "") {
-      setLastVisitError("required");
-    } else {
-      setLastVisitError("");
-    }
-  };
-
-  const validateNextVisit = (value) => {
-    if (value === "") {
-      setNextVisitError("required");
-    } else {
-      setNextVisitError("");
-    }
-  };
-
-  const validateEmergencyName = (value) => {
-    if (value === "") {
-      setEmergencyNameError("required");
-    } else {
-      setEmergencyNameError("");
-    }
-  };
-
-  const validateEmergencyRelation = (value) => {
-    if (value === "") {
-      setEmergencyRelationError("required");
-    } else {
-      setEmergencyRelationError("");
-    }
-  };
-
-  const validateEmergencyNumber = (value) => {
-    if (value === "") {
-      setEmergencyNumberError("required");
-    } else {
-      setEmergencyNumberError("");
-    }
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      console.log("Selected file:", file);
+      validateField(name, value);
     }
   };
 
@@ -191,108 +76,72 @@ const Addpatient = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Validate all fields
-    validateFullName(fullname);
-    validateAge(age);
-    validateGender(gender);
-    validatePhone(phone);
-    validateEmail(email);
-    validateAddress(address);
-    validateGenotype(genotype);
-    validateBloodPressure(bloodPressure);
-    validateTemp(temp);
-    validatePulse(pulse);
-    validateMedications(medications);
-    validateLastVisit(lastVisit);
-    validateNextVisit(nextVisit);
-    validateEmergencyName(emergencyName);
-    validateEmergencyRelation(emergencyRelation);
-    validateEmergencyNumber(emergencyNumber);
-
-    // Check for errors directly from current values
-    const hasErrors =
-      !fullname.trim() ||
-      !age.trim() ||
-      !gender.trim() ||
-      !phone.trim() ||
-      !email.trim() ||
-      !address.trim() ||
-      !genotype.trim() ||
-      !bloodPressure.trim() ||
-      !temp.trim() ||
-      !pulse.trim() ||
-      !lastVisit.trim() ||
-      !nextVisit.trim() ||
-      !medications.trim() ||
-      !emergencyName.trim() ||
-      !emergencyRelation.trim() ||
-      !emergencyNumber.trim() ||
-      fullNameError ||
-      ageError ||
-      genderError ||
-      phoneError ||
-      emailError ||
-      addressError ||
-      genotypeError ||
-      bloodPressureError ||
-      tempError ||
-      pulseError ||
-      lastVisitError ||
-      nextVisitError ||
-      medicationsError ||
-      emergencyNameError ||
-      emergencyRelationError ||
-      emergencyNumberError;
-
-    if (hasErrors) {
+    const valid = validateAllFields();
+    if (!valid) {
       setLoading(false);
       return;
     }
 
+    const data = new FormData();
+    data.append("fullname", formData.fullname);
+    data.append("dateOfBirth", formData.dateOfBirth);
+    data.append("gender", formData.gender);
+    data.append("phone", formData.phone);
+    data.append("email", formData.email);
+    data.append("address", formData.address);
+    data.append("upload", formData.upload);
+    data.append("genotype", formData.genotype);
+    data.append("bloodPressure", formData.bloodPressure);
+    data.append("temp", formData.temp);
+    data.append("pulse", formData.pulse);
+    data.append("lastVisit", formData.lastVisit);
+    data.append("nextVisit", formData.nextVisit);
+    data.append("medications", formData.medications);
+    data.append("emergencyName", formData.emergencyName);
+    data.append("emergencyRelation", formData.emergencyRelation);
+    data.append("emergencyNumber", formData.emergencyNumber);
+
     try {
-      const result = await create_Patient(
-        fullname,
-        age,
-        gender,
-        phone,
-        email,
-        address,
-        genotype,
-        bloodPressure,
-        temp,
-        pulse,
-        lastVisit,
-        nextVisit,
-        medications,
-        emergencyName,
-        emergencyRelation,
-        emergencyNumber
-      );
+      const result = await create_Patient(data);
+      console.log("Create Patient Result:", result);
 
-      console.log("API Response:", result); // Debug log
-
-      if (result && result.record) {
-        // Reset form
-        setFullname("");
-        setAge("");
-        setGender("");
-        setPhone("");
-        setEmail("");
-        setAddress("");
-        setGenotype("");
-        setBloodPressure("");
-        setTemp("");
-        setPulse("");
-        setLastVisit("");
-        setNextVisit("");
-        setMedications("");
-        setEmergencyName("");
-        setEmergencyRelation("");
-        setEmergencyNumber("");
-        navigate("/user_account/dashboard?update=success");
+      if (result) {
+        setFormData({
+          fullname: "",
+          dateOfBirth: "",
+          gender: "",
+          phone: "",
+          email: "",
+          address: "",
+          upload: null,
+          genotype: "",
+          bloodPressure: "",
+          temp: "",
+          pulse: "",
+          medications: "",
+          lastVisit: "",
+          nextVisit: "",
+          emergencyName: "",
+          emergencyRelation: "",
+          emergencyNumber: ""
+        });
+        setErrors({});
+        setTimeout(() => {
+          navigate("/user_account/dashboard?update=success");
+        }, 0);
+        // navigate("/user_account/dashboard?update=success");
       }
     } catch (error) {
-      console.error("Submission error:", error);
+      // Map backend field errors to form fields if available
+      const apiErrors = error.response?.data;
+      if (apiErrors && typeof apiErrors === "object") {
+        setErrors(prev => ({ ...prev, ...apiErrors }));
+      } else {
+        setErrors(prev => ({
+          ...prev,
+          form: error.response?.data?.message || "Failed to submit patient data"
+        }));
+      }
     } finally {
       setLoading(false);
     }
@@ -302,10 +151,17 @@ const Addpatient = () => {
     <section className="mt-4">
       <div className="relative w-full h-full tablet:w-auto tablet:h-auto overflow-y-auto mb-5">
         <h2 className="text-2xl font-semibold mt-4 mb-8 text-center">
-          Patient's record
+          Patient's Record
         </h2>
 
-        <form onSubmit={(e) => handleSubmit(e)}>
+        {errors.form && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 mx-4">
+            <p>{errors.form}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          {/* Personal Information */}
           <h4 className="font-primary font-bold text-xl mb-4 pl-4">
             Personal Information
           </h4>
@@ -313,435 +169,391 @@ const Addpatient = () => {
             {/* Full Name */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="fullname" className="font-secondary">
-                Full Name
+                Full Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 name="fullname"
-                placeholder="Enter fullname"
-                value={fullname}
-                onChange={(e) => {
-                  setFullname(e.target.value);
-                  validateFullName(e.target.value);
-                }}
-                onBlur={(e) => validateFullName(e.target.value)}
+                placeholder="Enter full name"
+                value={formData.fullname}
+                onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {fullNameError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {fullNameError}
-                </div>
+              {errors.fullname && (
+                <div className="text-red-500 text-sm mt-1">{errors.fullname}</div>
               )}
             </div>
 
-            {/* Age */}
+            {/* Date of Birth */}
             <div className="grid grid-cols-1 gap-2">
-              <label htmlFor="age" className="font-secondary">
-                Date of Birth
+              <label htmlFor="dateOfBirth" className="font-secondary">
+                Date of Birth <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
-                name="age"
-                placeholder="Enter date of birth"
-                value={age}
-                onChange={(e) => {
-                  setAge(e.target.value);
-                  validateAge(e.target.value);
-                }}
-                onBlur={(e) => validateAge(e.target.value)}
-                maxLength={2}
-                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                name="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                onBlur={handleBlur}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {ageError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {ageError}
-                </div>
+              {errors.dateOfBirth && (
+                <div className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</div>
               )}
             </div>
 
             {/* Gender */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="gender" className="font-secondary">
-                Gender
+                Gender <span className="text-red-500">*</span>
               </label>
               <select
                 name="gender"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                onBlur={(e) => validateGender(e.target.value)}
+                value={formData.gender}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 w-full font-primary"
+                required
               >
                 <option value="">Select gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
-              {genderError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {genderError}
-                </div>
+              {errors.gender && (
+                <div className="text-red-500 text-sm mt-1">{errors.gender}</div>
               )}
             </div>
 
             {/* Phone */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="phone" className="font-secondary">
-                Phone
+                Phone Number <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
                 name="phone"
                 placeholder="Enter phone number"
-                value={phone}
-                onChange={(e) => {
-                  setPhone(e.target.value);
-                  validatePhone(e.target.value);
-                }}
-                onBlur={(e) => validatePhone(e.target.value)}
-                maxLength={11}
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                required
               />
-              {phoneError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {phoneError}
-                </div>
+              {errors.phone && (
+                <div className="text-red-500 text-sm mt-1">{errors.phone}</div>
               )}
             </div>
 
             {/* Email */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="email" className="font-secondary">
-                Email
+                Email <span className="text-red-500">*</span>
               </label>
               <input
                 type="email"
                 name="email"
                 placeholder="Enter email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  validateEmail(e.target.value);
-                }}
-                onBlur={(e) => validateEmail(e.target.value)}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {emailError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {emailError}
-                </div>
+              {errors.email && (
+                <div className="text-red-500 text-sm mt-1">{errors.email}</div>
               )}
             </div>
 
             {/* Address */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="address" className="font-secondary">
-                Address
+                Address <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="enter address"
                 name="address"
-                value={address}
-                onChange={(e) => {
-                  setAddress(e.target.value);
-                  validateAddress(e.target.value);
-                }}
-                onBlur={(e) => validateAddress(e.target.value)}
+                placeholder="Enter address"
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {addressError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {addressError}
-                </div>
+              {errors.address && (
+                <div className="text-red-500 text-sm mt-1">{errors.address}</div>
               )}
             </div>
 
-            Photo Upload 
-            <div className="flex flex-col">
-              <span className="mb-4 font-secondary">Add patient's photo</span>
-              <div>
-                <label className="bg-gray-700 text-white px-4 py-2 rounded cursor-pointer">
+            {/* Photo Upload */}
+            <div className="grid grid-cols-1 gap-2">
+              <label className="font-secondary">
+                Patient Photo <span className="text-red-500">*</span>
+              </label>
+              <div className="flex items-center">
+                <label className="bg-gray-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-gray-600 transition">
                   Choose File
                   <input
                     type="file"
+                    name="upload"
+                    id="upload"
                     className="hidden"
-                    value={upload}
-                    onChange={handleFileChange}
+                    accept="image/*"
+                    onChange={(e) => {
+                      setFormData({ ...formData, upload: e.target.files[0] });
+                      validateField("upload", e.target.files[0]);
+                    }}
+                    onBlur={handleBlur}
                   />
                 </label>
-                <span className="ml-2 text-gray-300">
-                  {selectedFile ? selectedFile.name : "No file chosen"}
+                <span className="ml-3">
+                  {formData.upload && formData.upload.name}
                 </span>
               </div>
-               {uploadError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {uploadError}
-                </div>
-              )} 
+              {errors.upload && (
+                <div className="text-red-500 text-sm mt-1">{errors.upload}</div>
+              )}
             </div>
-           
           </section>
 
+          {/* Medical Information */}
           <h4 className="font-primary font-bold text-xl mb-4 mt-8 pl-4">
             Medical Information
           </h4>
           <section className="grid grid-cols-1 gap-8 px-4 tablet:grid-cols-2">
+            {/* Genotype */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="genotype" className="font-secondary">
-                Genotype
+                Blood Group <span className="text-red-500">*</span>
               </label>
               <select
-                name="bloodtype"
-                value={genotype}
-                onChange={(e) => setGenotype(e.target.value)}
-                onBlur={(e) => validateGenotype(e.target.value)}
+                name="genotype"
+                value={formData.genotype}
+                onChange={(e) => setFormData({ ...formData, genotype: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 w-full font-primary"
+                required
               >
-                <option value="">Select gender</option>
-                <option value="o+">O+</option>
-                <option value="o-">O-</option>
-                <option value="a-">A-</option>
-                <option value="a+">A+</option>
-                <option value="b+">B+</option>
-                <option value="b-">B-</option>
-                <option value="ab-">AB-</option>
-                <option value="ab+">AB+</option>
+                <option value="">Select blood group</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="A-">A-</option>
+                <option value="A+">A+</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB-">AB-</option>
+                <option value="AB+">AB+</option>
               </select>
-              {genotypeError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {genotypeError}
-                </div>
+              {errors.genotype && (
+                <div className="text-red-500 text-sm mt-1">{errors.genotype}</div>
               )}
             </div>
 
+            {/* Blood Pressure */}
             <div className="grid grid-cols-1 gap-2">
-              <label htmlFor="bloodpressure" className="font-secondary">
-                Blood Pressure
+              <label htmlFor="bloodPressure" className="font-secondary">
+                Blood Pressure <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="enter value"
-                name="bloodpressure"
-                value={bloodPressure}
-                onChange={(e) => {
-                  setBloodPressure(e.target.value);
-                  validateBloodPressure(e.target.value);
-                }}
-                onBlur={(e) => validateBloodPressure(e.target.value)}
+                name="bloodPressure"
+                placeholder="e.g. 120/80"
+                value={formData.bloodPressure}
+                onChange={(e) => setFormData({ ...formData, bloodPressure: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {bloodPressureError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {bloodPressureError}
-                </div>
+              {errors.bloodPressure && (
+                <div className="text-red-500 text-sm mt-1">{errors.bloodPressure}</div>
               )}
             </div>
 
+            {/* Temperature */}
             <div className="grid grid-cols-1 gap-2">
-              <label htmlFor="temperature" className="font-secondary">
-                Temperature
+              <label htmlFor="temp" className="font-secondary">
+                Temperature (°C) <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="enter value"
-                name="temperature"
-                value={temp}
-                onChange={(e) => {
-                  setTemp(e.target.value);
-                  validateTemp(e.target.value);
-                }}
-                onBlur={(e) => validateTemp(e.target.value)}
+                name="temp"
+                placeholder="e.g. 36.5"
+                value={formData.temp}
+                onChange={(e) => setFormData({ ...formData, temp: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {tempError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {tempError}
-                </div>
+              {errors.temp && (
+                <div className="text-red-500 text-sm mt-1">{errors.temp}</div>
               )}
             </div>
 
+            {/* Pulse */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="pulse" className="font-secondary">
-                Pulse
+                Pulse (bpm) <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="enter value"
                 name="pulse"
-                value={pulse}
-                onChange={(e) => {
-                  setPulse(e.target.value);
-                  validatePulse(e.target.value);
-                }}
-                onBlur={(e) => validatePulse(e.target.value)}
+                placeholder="e.g. 72"
+                value={formData.pulse}
+                onChange={(e) => setFormData({ ...formData, pulse: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {pulseError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {pulseError}
-                </div>
+              {errors.pulse && (
+                <div className="text-red-500 text-sm mt-1">{errors.pulse}</div>
               )}
             </div>
 
+            {/* Last Visit */}
             <div className="grid grid-cols-1 gap-2">
-              <label htmlFor="lastvisit" className="font-secondary">
-                Last Visit
+              <label htmlFor="lastVisit" className="font-secondary">
+                Last Visit Date <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
-                name="lastvisit"
-                value={lastVisit}
-                onChange={(e) => {
-                  setLastVisit(e.target.value);
-                  validateLastVisit(e.target.value);
-                }}
-                onBlur={(e) => validateLastVisit(e.target.value)}
+                name="lastVisit"
+                value={formData.lastVisit}
+                onChange={(e) => setFormData({ ...formData, lastVisit: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {lastVisitError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {lastVisitError}
-                </div>
+              {errors.lastVisit && (
+                <div className="text-red-500 text-sm mt-1">{errors.lastVisit}</div>
               )}
             </div>
+
+            {/* Next Visit */}
             <div className="grid grid-cols-1 gap-2">
-              <label htmlFor="nextvisit" className="font-secondary">
-                Next Visit
+              <label htmlFor="nextVisit" className="font-secondary">
+                Next Visit Date <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
-                name="nextvisit"
-                value={nextVisit}
-                onChange={(e) => {
-                  setNextVisit(e.target.value);
-                  validateNextVisit(e.target.value);
-                }}
-                onBlur={(e) => validateNextVisit(e.target.value)}
+                name="nextVisit"
+                value={formData.nextVisit}
+                onChange={(e) => setFormData({ ...formData, nextVisit: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {nextVisitError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {nextVisitError}
-                </div>
+              {errors.nextVisit && (
+                <div className="text-red-500 text-sm mt-1">{errors.nextVisit}</div>
               )}
             </div>
           </section>
 
+          {/* Medications */}
           <div className="grid grid-cols-1 gap-2 px-4 mt-4">
             <label htmlFor="medications" className="font-secondary">
-              Medications
+              Current Medications <span className="text-red-500">*</span>
             </label>
             <textarea
-              placeholder="enter medication"
               name="medications"
-              value={medications}
-              onChange={(e) => {
-                setMedications(e.target.value);
-                validateMedications(e.target.value);
-              }}
-              onBlur={(e) => validateMedications(e.target.value)}
-              className="h-30 outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+              placeholder="List all current medications and dosages"
+              value={formData.medications}
+              onChange={(e) => setFormData({ ...formData, medications: e.target.value })}
+              onBlur={handleBlur}
+              rows="5"
+              className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+              required
             />
-            {medicationsError && (
-              <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                {medicationsError}
-              </div>
+            {errors.medications && (
+              <div className="text-red-500 text-sm mt-1">{errors.medications}</div>
             )}
           </div>
 
+          {/* Emergency Contact */}
           <h4 className="font-primary font-bold text-xl mb-4 mt-8 pl-4">
             Emergency Contact Information
           </h4>
-
           <section className="grid grid-cols-1 gap-8 px-4 tablet:grid-cols-2">
+            {/* Emergency Name */}
             <div className="grid grid-cols-1 gap-2">
-              <label htmlFor="emergenc o" className="font-secondary">
-                Name
+              <label htmlFor="emergencyName" className="font-secondary">
+                Emergency Contact Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="enter name"
-                name="emergencyname"
-                value={emergencyName}
-                onChange={(e) => {
-                  setEmergencyName(e.target.value);
-                  validateEmergencyName(e.target.value);
-                }}
-                onBlur={(e) => validateEmergencyName(e.target.value)}
+                name="emergencyName"
+                placeholder="Enter full name"
+                value={formData.emergencyName}
+                onChange={(e) => setFormData({ ...formData, emergencyName: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {emergencyNameError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {emergencyNameError}
-                </div>
+              {errors.emergencyName && (
+                <div className="text-red-500 text-sm mt-1">{errors.emergencyName}</div>
               )}
             </div>
+
+            {/* Emergency Relation */}
             <div className="grid grid-cols-1 gap-2">
-              <label htmlFor="emergencyrelationship" className="font-secondary">
-                Relationship
+              <label htmlFor="emergencyRelation" className="font-secondary">
+                Relationship to Patient <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="enter relationship"
-                name="emergencyrelation"
-                value={emergencyRelation}
-                onChange={(e) => {
-                  setEmergencyRelation(e.target.value);
-                  validateEmergencyRelation(e.target.value);
-                }}
-                onBlur={(e) => validateEmergencyRelation(e.target.value)}
+                name="emergencyRelation"
+                placeholder="e.g. Spouse, Parent"
+                value={formData.emergencyRelation}
+                onChange={(e) => setFormData({ ...formData, emergencyRelation: e.target.value })}
+                onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {emergencyRelationError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {emergencyRelationError}
-                </div>
+              {errors.emergencyRelation && (
+                <div className="text-red-500 text-sm mt-1">{errors.emergencyRelation}</div>
               )}
             </div>
+
+            {/* Emergency Number */}
             <div className="grid grid-cols-1 gap-2">
-              <label htmlFor="emergencynumber" className="font-secondary">
-                Phone
+              <label htmlFor="emergencyNumber" className="font-secondary">
+                Emergency Contact Phone <span className="text-red-500">*</span>
               </label>
               <input
-                type="number"
-                placeholder="enter phone number"
-                name="emergencynumber"
-                value={emergencyNumber}
-                onChange={(e) => {
-                  setEmergencyNumber(e.target.value);
-                  validateEmergencyNumber(e.target.value);
-                }}
-                onBlur={(e) => validateEmergencyNumber(e.target.value)}
-                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                type="tel"
+                name="emergencyNumber"
+                placeholder="Enter phone number"
+                value={formData.emergencyNumber}
+                onChange={(e) => setFormData({ ...formData, emergencyNumber: e.target.value })}
+                onBlur={handleBlur}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
               />
-              {emergencyNumberError && (
-                <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                  {emergencyNumberError}
-                </div>
+              {errors.emergencyNumber && (
+                <div className="text-red-500 text-sm mt-1">{errors.emergencyNumber}</div>
               )}
             </div>
           </section>
 
-          <div className="flex justify-center mt-8">
-            {loading ? (
-              <button className="w-full cursor-not-allowed bg-text text-white text-lg font-semibold p-3 rounded-3xl mt-3 flex justify-center">
-                <svg
-                  className="mr-3 size-8 text-light-gray animate-spin"
-                  viewBox="0 0 24 24"
-                >
-                  <FaSpinner />
-                </svg>
-              </button>
-            ) : (
-              <button
-                type="submit"
-                onClick={() =>
-                  navigate("/user_account/dashboard?update=success")
-                }
-                className="bg-text hover:bg-primary w-full rounded-2xl p-4 text-white mt-2 font-secondary cursor-pointer"
-              >
-                Add Patient
-              </button>
-            )}
+          {/* Submit Button */}
+          <div className="flex justify-center mt-8 mb-8">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full max-w-md rounded-2xl p-4 text-white mt-2 font-secondary ${
+                loading ? "bg-gray-400 cursor-not-allowed" : "bg-text hover:bg-primary cursor-pointer"
+              }`}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <FaSpinner className="animate-spin mr-2" />
+                  Processing...
+                </span>
+              ) : (
+                "Add Patient"
+              )}
+            </button>
           </div>
         </form>
       </div>
