@@ -75,33 +75,32 @@ const Accountinfo = () => {
               </h1>
 
               <div className="block mt-2 text-lg font-bold font-primary">
-  {isVerified === null ? (
-    <span className="flex items-center text-gray-600">
-      <FaSpinner className="animate-spin mr-2" />
-      Checking verification status...
-    </span>
-  ) : isVerified ? (
-    <span className="flex text-green-600">
-      Verified <VscVerifiedFilled className="mt-1.5 ml-1" />
-    </span>
-  ) : (
-    <span className="flex text-red-600">
-      Not Verified <MdErrorOutline className="mt-1.5 ml-1" />
-    </span>
-  )}
+                {isVerified === null ? (
+                  <span className="flex items-center text-gray-600">
+                    <FaSpinner className="animate-spin mr-2" />
+                    Checking verification status...
+                  </span>
+                ) : isVerified ? (
+                  <span className="flex text-green-600">
+                    Verified <VscVerifiedFilled className="mt-1.5 ml-1" />
+                  </span>
+                ) : (
+                  <span className="flex text-red-600">
+                    Not Verified <MdErrorOutline className="mt-1.5 ml-1" />
+                  </span>
+                )}
 
-  {!isVerified && isVerified !== null && (
-    <div className="mt-2">
-      <button
-        onClick={toggleConfirm}
-        className="bg-gray-500 hover:bg-gray-600 cursor-pointer font-primary font-medium flex items-center rounded-xl p-4 text-white text-sm"
-      >
-        Send Confirmation Link <FiSend className="ml-2 mt-1" />
-      </button>
-    </div>
-  )}
-</div>
-
+                {!isVerified && isVerified !== null && (
+                  <div className="mt-2">
+                    <button
+                      onClick={toggleConfirm}
+                      className="bg-gray-500 hover:bg-gray-600 cursor-pointer font-primary font-medium flex items-center rounded-xl p-4 text-white text-sm"
+                    >
+                      Send Confirmation Link <FiSend className="ml-2 mt-1" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </section>

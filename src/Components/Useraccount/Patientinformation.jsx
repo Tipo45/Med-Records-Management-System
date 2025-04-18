@@ -46,7 +46,8 @@ console.log("Patient Data:", patient);
       </h1>
       {patient.upload && (
     <img
-      src={`http://127.0.0.1:8090/api/files/patients/${patient.id}/${patient.upload}`}
+      // src={`http://127.0.0.1:8090/api/files/patients/${patient.id}/${patient.upload}`}
+      src={`https://service-konnect.pockethost.io/api/files/patients/${patient.id}/${patient.upload}`}
       alt="Patient"
       className="w-32 h-32 object-cover rounded-full mb-4 border"
     />
