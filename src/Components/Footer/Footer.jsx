@@ -6,10 +6,7 @@ const Footer = () => {
       <hr className="border-t border-gray-500 my-10" />
 
       <div
-        className="mt-10 mb-10 text-center"
-        data-aos="fade-up"
-        data-aos-duration="2000"
-      >
+        className="mt-10 mb-10 text-center">
         <p className="text-white">
           © {new Date().getFullYear()} Tipotek. All Rights Reserved.
         </p>

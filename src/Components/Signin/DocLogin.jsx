@@ -206,7 +206,7 @@ const DocLogin = () => {
                   type="submit"
                   className="w-full cursor-pointer bg-text hover:bg-primary text-white text-lg font-primary font-semibold p-3 rounded-3xl mt-3"
                   data-aos="zoom-in"
-                  data-aos-duration="2500"
+                  data-aos-duration="1000"
                 >
                   Sign In
                 </button>
@@ -215,7 +215,7 @@ const DocLogin = () => {
             <div
               className="text-center text-sm font-secondary"
               data-aos="fade-up"
-              data-aos-duration="3000"
+              data-aos-duration="1000"
             >
               Don&apos;t have an account?{" "}
               <Link
@@ -228,7 +228,7 @@ const DocLogin = () => {
             <div
               className="text-center text-sm font-secondary"
               data-aos="fade-up"
-              data-aos-duration="3000"
+              data-aos-duration="1000"
             >
               Not a doctor?{" "}
               <Link
@@ -244,7 +244,7 @@ const DocLogin = () => {
         <div
           className="text-balance text-center text-xs text-muted-foreground font-primary"
           data-aos="fade-up"
-          data-aos-duration="3000"
+          data-aos-duration="1000"
         >
           By clicking Login, you agree to our Terms of Service and Privacy
           Policy .
