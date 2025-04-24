@@ -31,10 +31,7 @@ export async function create_medofficer(
     role: role,
   };
   const record = await pb.collection("medofficer").create(data);
-  //  await pb
-  //   .collection("medofficer")
-  //   .authWithPassword(email, password);
-  // await pb.collection('medofficer').requestVerification(email);
+  await pb.collection('medofficer').requestVerification(email);
   return record;
 }
 
@@ -82,11 +79,6 @@ export async function doctor_info() {
 }
 
 // create patients
-// export async function create_Patient(data) {
-//   const record = await pb.collection("patients").create(data);
-//   return record;
-// }
-
 export async function create_Patient(data) {
   if (data instanceof FormData) {
     data.append("creator", pb.authStore.record?.id);
