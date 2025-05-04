@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { FaArrowRight, FaCheckCircle, FaEnvelope } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { requestVerification } from '../../lib/pocketbase';
+import { request_Verification } from '../../lib/pocketbase';
 
 const Emailverification = () => {
 
@@ -45,7 +45,7 @@ const Emailverification = () => {
   
           <div className="flex flex-col space-y-3">
             <button
-              onClick={() => {requestVerification(),
+              onClick={() => {request_Verification(),
                 alert("Verification email resent!");
               }}
               className="w-full py-3 px-4 bg-secondary cursor-pointer text-white font-medium rounded-lg transition duration-200"
@@ -54,7 +54,7 @@ const Emailverification = () => {
             </button>
   
             <button
-              onClick={() => navigate("/login/doctor")}
+              onClick={() => navigate(-1)}
               className="w-full cursor-pointer py-3 px-4 flex items-center justify-center text-text hover:text-secondary font-medium rounded-lg group"
             >
               Return to Login <FaArrowRight className="ml-2 transition-all duration-300 group-hover:translate-x-2" />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { checkVerifyStatus, deleteAccount } from "../../lib/pocketbase";
+import { checkVerifyStatus, deleteAccount, request_Verification } from "../../lib/pocketbase";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useDoctorData } from "../../hooks/useDoctorData";
 import { VscVerifiedFilled } from "react-icons/vsc";
@@ -13,7 +13,8 @@ const Accountinfo = () => {
   const navigate = useNavigate();
   const userRole = userData?.role;
 
-  const toggleConfirm = () => {
+  const toggleConfirm = async () => {
+    await request_Verification(userData?.email);
     alert("confirmation link sent");
   };
 

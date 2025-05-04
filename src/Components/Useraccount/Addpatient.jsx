@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const Addpatient = () => {
   const [formData, setFormData] = useState({
+    patientID: "",
     fullname: "",
     dateOfBirth: "",
     gender: "",
@@ -85,6 +86,7 @@ const Addpatient = () => {
     }
 
     const data = new FormData();
+    data.append("patientID", formData.patientID);
     data.append("fullname", formData.fullname);
     data.append("dateOfBirth", formData.dateOfBirth);
     data.append("gender", formData.gender);
@@ -108,6 +110,7 @@ const Addpatient = () => {
 
       if (result) {
         setFormData({
+          patientID: "",
           fullname: "",
           dateOfBirth: "",
           gender: "",
@@ -167,6 +170,26 @@ const Addpatient = () => {
             Personal Information
           </h4>
           <section className="grid grid-cols-1 gap-8 px-4 tablet:grid-cols-2">
+          {/* Patient ID */}
+          <div className="grid grid-cols-1 gap-2">
+              <label htmlFor="fullname" className="font-secondary">
+                Patient ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="patientID"
+                placeholder="PID-0001"
+                value={formData.patientID}
+                onChange={(e) => setFormData({ ...formData, patientID: e.target.value })}
+                onBlur={handleBlur}
+                className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                required
+              />
+              {errors.patientID && (
+                <div className="text-red-500 text-sm mt-1">{errors.patientID}</div>
+              )}
+            </div>
+
             {/* Full Name */}
             <div className="grid grid-cols-1 gap-2">
               <label htmlFor="fullname" className="font-secondary">
