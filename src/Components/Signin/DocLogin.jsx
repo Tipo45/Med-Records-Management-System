@@ -1,126 +1,110 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { request_OTP } from "../../lib/pocketbase";
+import { loginWithOTP, requestOTP } from "../../lib/pocketbase";
+import { render } from "@react-email/render";
+import OTPEmail from "../../Emails/OTPEmail";
 
 const DocLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isOTPSent, setIsOTPSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [countdown, setCountdown] = useState(0);
   const navigate = useNavigate();
 
   const validateEmail = (value) => {
     if (value === "") {
       setEmailError("email required");
-      setLoading(false);
-      return;
+      return false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setEmailError("Invalid email format");
+      return false;
     } else {
       setEmailError("");
+      return true;
     }
   };
 
-  const validatePassword = (value) => {
-    if (value === "") {
-      setPasswordError("Password required");
+  // Countdown timer effect
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
+
+  const handleSendOTP = async () => {
+    const isEmailValid = validateEmail(email);
+    if (!isEmailValid) return;
+
+    setLoading(true);
+    setLoginError("");
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const emailContent = await render(<OTPEmail otp={otp} />);
+
+    try {
+      await requestOTP(email, otp, emailContent);
+      setIsOTPSent(true);
+      setCountdown(30); // Start 30-second countdown
+    } catch (error) {
+      const message = error.message.includes("No account found")
+        ? "No account found with this email"
+        : "Failed to send OTP. Please try again.";
+      setLoginError(message);
+    } finally {
       setLoading(false);
-      return;
-    } else {
-      setPasswordError("");
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setLoginError("");
+  const handleResendOTP = async () => {
+    if (countdown === 0) {
+      await handleSendOTP();
+    }
+  };
 
-  //   validateEmail(email);
-  //   validatePassword(password);
+  const handleVerifyOTP = async () => {
+    if (!otp) {
+      setLoginError("Please enter the OTP");
+      return;
+    }
+    if (!password) {
+      setLoginError("Please enter your password");
+      return;
+    }
 
-  //   if (!emailError && !passwordError) {
-  //     try {
-  //         navigate("/verify-otp");
-  //     } catch (error) {
-  //       console.log(error);
-  //       setLoginError("Incorrect login details");
-  //     }
-  //   }
+    setLoading(true);
+    setLoginError("");
 
-  //   setLoading(false);
-  // };
+    try {
+      const result = await loginWithOTP(email, password, otp);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-   
-  
-  //   validateEmail(email);
-  //   validatePassword(password);
-  
-  //   if (emailError || passwordError) {
-  //     setLoading(false);
-  //     return;
-  //   }
-  
-  //   try {
-  //     // First request OTP to be sent to the user's email
-  //     await pb.collection('medofficer').requestOTP(email);
-      
-  //     // If OTP request succeeds, navigate to verification page
-  //     navigate("/verify-otp", { 
-  //       state: { email } // Pass the email to the OTP page
-  //     });
-  //   } catch (error) {
-  //     console.error("Login error:", error);
-  //     setLoginError(error.message || "Failed to send OTP. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+      if (result.record) {
+        navigate("/user_account/dashboard?login=success");
+      }
+    } catch (error) {
+      const message = error.message.includes("No account found")
+      ? "No account found with this email"
+      : "Failed to send OTP. Please try again.";
+    setLoginError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setLoginError(""); // Clear previous errors
-  
-    // Validate fields
-    validateEmail(email);
-    validatePassword(password);
-  
-    // Check if fields are empty
-    if (!email || !password) {
-      setLoading(false);
-      return; // Don't proceed if fields are empty
-    }
-  
-    // Check if there are any validation errors
-    if (emailError || passwordError) {
-      setLoading(false);
-      return;
-    }
-  
-    try {
-      // First request OTP to be sent to the user's email
-      const result = request_OTP(email);
-      
-      // If OTP request succeeds, navigate to verification page
-      if (result) {
-        navigate("/verify-otp", { 
-          state: { email } // Pass the email to the OTP page
-        });
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      // Only show error if fields are filled
-      if (email && password) {
-        setLoginError(error.message || "Failed to send OTP. Please try again.");
-      }
-    } finally {
-      setLoading(false);
+    setLoginError("");
+    if (isOTPSent) {
+      handleVerifyOTP();
+    } else {
+      handleSendOTP();
     }
   };
 
@@ -136,6 +120,7 @@ const DocLogin = () => {
             {loginError}
           </div>
         )}
+
         <form onSubmit={(e) => handleSubmit(e)}>
           <div className="grid gap-6">
             <div className="grid gap-6">
@@ -158,6 +143,7 @@ const DocLogin = () => {
                   className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                   data-aos="fade-left"
                   data-aos-duration="1000"
+                  disabled={isOTPSent}
                 />
                 {emailError && (
                   <div className="text-red-500 font-medium p-2 bg-gray-200 rounded-xl mt-1 mb-1">
@@ -165,35 +151,68 @@ const DocLogin = () => {
                   </div>
                 )}
               </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
+
+              {isOTPSent && (
+                <div className="grid gap-2">
                   <label
-                    htmlFor="password"
+                    htmlFor="otp"
                     className="font-primary"
                     data-aos="fade-left"
                     data-aos-duration="1500"
                   >
-                    Password
+                    OTP Code
                   </label>
-                  
-                </div>
-                <input
-                  id="password"
-                  type="password"
-                  placeholder="********"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onBlur={(e) => validatePassword(e.target.value)}
-                  className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
-                  data-aos="fade-left"
-                  data-aos-duration="2000"
-                />
-                {passwordError && (
-                  <div className="text-red-500 p-2 bg-gray-200 rounded-xl font-medium mt-1 mb-1">
-                    {passwordError}
+                  <div className="flex gap-2">
+                    <input
+                      id="otp"
+                      type="number"
+                      placeholder="Enter OTP"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      className="flex-1 outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      data-aos="fade-left"
+                      data-aos-duration="2000"
+                    />
+                    <button
+                      type="button"
+                      className={`text-white text-md p-2 rounded-lg whitespace-nowrap min-w-32 ${
+                        countdown === 0
+                          ? "bg-primary hover:bg-primary-hover cursor-pointer"
+                          : "bg-gray-400 cursor-not-allowed"
+                      }`}
+                      onClick={handleResendOTP}
+                      disabled={countdown > 0 || loading}
+                    >
+                      {countdown > 0 ? `Resend in ${countdown}s` : "Resend OTP"}
+                    </button>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+
+              {isOTPSent && (
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <label
+                      htmlFor="password"
+                      className="font-primary"
+                      data-aos="fade-left"
+                      data-aos-duration="1500"
+                    >
+                      Password
+                    </label>
+                  </div>
+                  <input
+                    id="password"
+                    type="password"
+                    placeholder="********"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
+                    data-aos="fade-left"
+                    data-aos-duration="2000"
+                  />
+                </div>
+              )}
 
               {loading ? (
                 <button className="w-full cursor-not-allowed bg-text text-white text-lg font-semibold p-3 rounded-3xl mt-3 flex justify-center">
@@ -208,7 +227,7 @@ const DocLogin = () => {
                   data-aos="zoom-in"
                   data-aos-duration="1000"
                 >
-                  Sign In
+                  {isOTPSent ? "Verify OTP & Login" : "Request OTP"}
                 </button>
               )}
             </div>
