@@ -23,7 +23,7 @@ const Addpatient = () => {
     nextVisit: "",
     emergencyName: "",
     emergencyRelation: "",
-    emergencyNumber: ""
+    emergencyNumber: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -53,7 +53,7 @@ const Addpatient = () => {
     } else if (name === "nextVisit" && new Date(value) < new Date()) {
       error = "Next visit must be in the future";
     }
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
     return !error;
   }, []);
 
@@ -127,10 +127,10 @@ const Addpatient = () => {
           nextVisit: "",
           emergencyName: "",
           emergencyRelation: "",
-          emergencyNumber: ""
+          emergencyNumber: "",
         });
         setErrors({});
-         queryClient.invalidateQueries({ queryKey: ["patients"] });
+        queryClient.invalidateQueries({ queryKey: ["patients"] });
         setTimeout(() => {
           navigate("/user_account/dashboard?update=success");
         }, 0);
@@ -139,11 +139,12 @@ const Addpatient = () => {
       // Map backend field errors to form fields if available
       const apiErrors = error.response?.data;
       if (apiErrors && typeof apiErrors === "object") {
-        setErrors(prev => ({ ...prev, ...apiErrors }));
+        setErrors((prev) => ({ ...prev, ...apiErrors }));
       } else {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          form: error.response?.data?.message || "Failed to submit patient data"
+          form:
+            error.response?.data?.message || "Failed to submit patient data",
         }));
       }
     } finally {
@@ -170,8 +171,8 @@ const Addpatient = () => {
             Personal Information
           </h4>
           <section className="grid grid-cols-1 gap-8 px-4 tablet:grid-cols-2">
-          {/* Patient ID */}
-          <div className="grid grid-cols-1 gap-2">
+            {/* Patient ID */}
+            <div className="grid grid-cols-1 gap-2">
               <label htmlFor="fullname" className="font-secondary">
                 Patient ID <span className="text-red-500">*</span>
               </label>
@@ -180,13 +181,17 @@ const Addpatient = () => {
                 name="patientID"
                 placeholder="PID-0001"
                 value={formData.patientID}
-                onChange={(e) => setFormData({ ...formData, patientID: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, patientID: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.patientID && (
-                <div className="text-red-500 text-sm mt-1">{errors.patientID}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.patientID}
+                </div>
               )}
             </div>
 
@@ -200,13 +205,17 @@ const Addpatient = () => {
                 name="fullname"
                 placeholder="Enter full name"
                 value={formData.fullname}
-                onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, fullname: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.fullname && (
-                <div className="text-red-500 text-sm mt-1">{errors.fullname}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.fullname}
+                </div>
               )}
             </div>
 
@@ -219,13 +228,17 @@ const Addpatient = () => {
                 type="date"
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
-                onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, dateOfBirth: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.dateOfBirth && (
-                <div className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.dateOfBirth}
+                </div>
               )}
             </div>
 
@@ -237,7 +250,9 @@ const Addpatient = () => {
               <select
                 name="gender"
                 value={formData.gender}
-                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, gender: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 w-full font-primary"
                 required
@@ -261,7 +276,9 @@ const Addpatient = () => {
                 name="phone"
                 placeholder="Enter phone number"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 required
@@ -281,7 +298,9 @@ const Addpatient = () => {
                 name="email"
                 placeholder="Enter email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
@@ -301,13 +320,17 @@ const Addpatient = () => {
                 name="address"
                 placeholder="Enter address"
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, address: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.address && (
-                <div className="text-red-500 text-sm mt-1">{errors.address}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.address}
+                </div>
               )}
             </div>
 
@@ -336,6 +359,9 @@ const Addpatient = () => {
                   {formData.upload && formData.upload.name}
                 </span>
               </div>
+              <div className="text-xs text-gray-500 mt-1">
+                Maximum file size: 4MB. Only image files are allowed.
+              </div>
               {errors.upload && (
                 <div className="text-red-500 text-sm mt-1">{errors.upload}</div>
               )}
@@ -355,7 +381,9 @@ const Addpatient = () => {
               <select
                 name="genotype"
                 value={formData.genotype}
-                onChange={(e) => setFormData({ ...formData, genotype: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, genotype: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2 w-full font-primary"
                 required
@@ -371,7 +399,9 @@ const Addpatient = () => {
                 <option value="AB+">AB+</option>
               </select>
               {errors.genotype && (
-                <div className="text-red-500 text-sm mt-1">{errors.genotype}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.genotype}
+                </div>
               )}
             </div>
 
@@ -385,13 +415,17 @@ const Addpatient = () => {
                 name="bloodPressure"
                 placeholder="e.g. 120/80"
                 value={formData.bloodPressure}
-                onChange={(e) => setFormData({ ...formData, bloodPressure: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, bloodPressure: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.bloodPressure && (
-                <div className="text-red-500 text-sm mt-1">{errors.bloodPressure}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.bloodPressure}
+                </div>
               )}
             </div>
 
@@ -405,7 +439,9 @@ const Addpatient = () => {
                 name="temp"
                 placeholder="e.g. 36.5"
                 value={formData.temp}
-                onChange={(e) => setFormData({ ...formData, temp: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, temp: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
@@ -425,7 +461,9 @@ const Addpatient = () => {
                 name="pulse"
                 placeholder="e.g. 72"
                 value={formData.pulse}
-                onChange={(e) => setFormData({ ...formData, pulse: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, pulse: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
@@ -444,13 +482,17 @@ const Addpatient = () => {
                 type="date"
                 name="lastVisit"
                 value={formData.lastVisit}
-                onChange={(e) => setFormData({ ...formData, lastVisit: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastVisit: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.lastVisit && (
-                <div className="text-red-500 text-sm mt-1">{errors.lastVisit}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.lastVisit}
+                </div>
               )}
             </div>
 
@@ -463,13 +505,17 @@ const Addpatient = () => {
                 type="date"
                 name="nextVisit"
                 value={formData.nextVisit}
-                onChange={(e) => setFormData({ ...formData, nextVisit: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, nextVisit: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.nextVisit && (
-                <div className="text-red-500 text-sm mt-1">{errors.nextVisit}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.nextVisit}
+                </div>
               )}
             </div>
           </section>
@@ -483,14 +529,18 @@ const Addpatient = () => {
               name="medications"
               placeholder="List all current medications and dosages"
               value={formData.medications}
-              onChange={(e) => setFormData({ ...formData, medications: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, medications: e.target.value })
+              }
               onBlur={handleBlur}
               rows="5"
               className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
               required
             />
             {errors.medications && (
-              <div className="text-red-500 text-sm mt-1">{errors.medications}</div>
+              <div className="text-red-500 text-sm mt-1">
+                {errors.medications}
+              </div>
             )}
           </div>
 
@@ -509,13 +559,17 @@ const Addpatient = () => {
                 name="emergencyName"
                 placeholder="Enter full name"
                 value={formData.emergencyName}
-                onChange={(e) => setFormData({ ...formData, emergencyName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, emergencyName: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.emergencyName && (
-                <div className="text-red-500 text-sm mt-1">{errors.emergencyName}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.emergencyName}
+                </div>
               )}
             </div>
 
@@ -529,13 +583,20 @@ const Addpatient = () => {
                 name="emergencyRelation"
                 placeholder="e.g. Spouse, Parent"
                 value={formData.emergencyRelation}
-                onChange={(e) => setFormData({ ...formData, emergencyRelation: e.target.value })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    emergencyRelation: e.target.value,
+                  })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.emergencyRelation && (
-                <div className="text-red-500 text-sm mt-1">{errors.emergencyRelation}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.emergencyRelation}
+                </div>
               )}
             </div>
 
@@ -549,13 +610,17 @@ const Addpatient = () => {
                 name="emergencyNumber"
                 placeholder="Enter phone number"
                 value={formData.emergencyNumber}
-                onChange={(e) => setFormData({ ...formData, emergencyNumber: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, emergencyNumber: e.target.value })
+                }
                 onBlur={handleBlur}
                 className="outline-1 outline-primary hover:outline-secondary focus:outline-secondary rounded-2xl p-2"
                 required
               />
               {errors.emergencyNumber && (
-                <div className="text-red-500 text-sm mt-1">{errors.emergencyNumber}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {errors.emergencyNumber}
+                </div>
               )}
             </div>
           </section>
@@ -566,7 +631,9 @@ const Addpatient = () => {
               type="submit"
               disabled={loading}
               className={`w-full max-w-md rounded-2xl p-4 text-white mt-2 font-secondary ${
-                loading ? "bg-gray-400 cursor-not-allowed" : "bg-text hover:bg-primary cursor-pointer"
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-text hover:bg-primary cursor-pointer"
               }`}
             >
               {loading ? (
