@@ -130,7 +130,7 @@ const Registration = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     // Validate all fields
     validateFirstname(firstname);
     validateLastname(lastname);
@@ -138,22 +138,22 @@ const Registration = () => {
     validateEmail(email);
     validatePassword(password);
     validateConfirmPassword(passwordConfirm);
-  
+
     // Check for errors directly from current values
-    const hasErrors = 
-      !firstname.trim() || 
-      !lastname.trim() || 
-      !role.trim() || 
-      !email.trim() || 
-      !password.trim() || 
+    const hasErrors =
+      !firstname.trim() ||
+      !lastname.trim() ||
+      !role.trim() ||
+      !email.trim() ||
+      !password.trim() ||
       !passwordConfirm.trim() ||
       password !== passwordConfirm;
-  
+
     if (hasErrors) {
       setLoading(false);
       return;
     }
-  
+
     try {
       console.log("Attempting to create user..."); // Debug log
       const result = await create_medofficer(
@@ -164,14 +164,11 @@ const Registration = () => {
         lastname,
         role
       );
-  
-      console.log("Creation result:", result); // Debug log
-      
+
       if (result) {
         console.log("Navigating to email verification..."); // Debug log
-        navigate("/email-verification", { 
-          state: { email: email },
-          replace: true 
+        navigate("/email-verification", {
+          state: { email: email, userType: role },
         });
       } else {
         console.error("Unexpected result format:", result);
@@ -433,7 +430,7 @@ const Registration = () => {
           data-aos-duration="2000"
           data-aos-delay="500"
         >
-          By clicking register, you agree to our Terms of Service and Privacy
+          By clicking Sign Up, you agree to our Terms of Service and Privacy
           Policy.
         </div>
       </div>

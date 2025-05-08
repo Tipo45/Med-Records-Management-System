@@ -1,10 +1,7 @@
 // 123412345 - password
 // Christian12@.
-
 import PocketBase from "pocketbase";
 import sendEmail from "./sendEMail";
-
-// export const pb = new PocketBase("http://127.0.0.1:8090");
 
 export const pb = new PocketBase("https://service-konnect.pockethost.io/");
 
@@ -137,26 +134,12 @@ export const loginWithOTP = async (email, password, otp) => {
   return record;
 };
 
-// login medofficer
-export async function login_doctor(email, password) {
-  const record = await pb
-    .collection("medofficer")
-    .authWithPassword(email, password);
-  return record;
-}
-
 // check verified status
 export async function checkVerifyStatus() {
   if (pb.authStore.isValid) {
     await pb.collection("medofficer").authRefresh();
     return pb.authStore.record?.verified || false;
   }
-}
-
-// login medOfficer
-export async function login_medOfficer(email, otp) {
-  const record = await pb.collection("medofficer").authWithOTP(email, otp);
-  return record;
 }
 
 // view medofficer info
